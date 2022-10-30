@@ -1,0 +1,52 @@
+.logoContent {
+  display: flex;
+  flex-direction: column;
+  padding: 0 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  width: auto;
+  height: inherit;
+}
+.lockLogo {
+  height: 204px;
+  width: 170px;
+}
+.protectText {
+  height: 54px;
+  width: 281px;
+  color: #ffffff;
+  font-family: "Open Sans";
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  line-height: 27px;
+  text-align: center;
+}
+
+.mobileLogo {
+  display: none;
+}
+
+@media only screen and (max-width: 768px) {
+  .logoContent {
+    height: auto;
+  }
+  .mobileLogo {
+    display: block;
+    position: absolute;
+    top: 30px;
+  }
+  .lockLogo,
+  .protectText {
+    display: none;
+  }
+  .signInTab,
+  .signUpTab {
+    color: #ffffff;
+    font-family: "Open Sans";
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 0;
+    line-height: 27px;
+  }
+} /*# sourceMappingURL=lockLogo.css.map */

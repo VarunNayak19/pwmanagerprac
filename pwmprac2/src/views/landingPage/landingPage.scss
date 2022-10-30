@@ -1,0 +1,118 @@
+@import "../../index.scss";
+
+.mainContent {
+    height: 100vh;
+    background-color: aqua;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+
+    .blueBox {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        flex-wrap: wrap;
+        height: 481px;
+        height: auto;
+        padding: 73px 0 20px 30px;
+        width: 839px;
+        margin: 10px;
+        border-radius: 15px;
+        background: $blueBox;
+        box-shadow: 0 8px 18px 10px rgba(0, 0, 0, 0.02);
+    }
+}
+
+.input {
+    box-sizing: border-box;
+    height: 54px;
+    width: 332px;
+    border: 0.55px solid rgba(208, 208, 208, 0.5);
+    border-radius: 4px;
+    background-color: #FFFFFF;
+    color: #787E8C;
+    font-family: "Open Sans";
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 22px;
+    padding: 0 0 0 22px;
+}
+
+.signUpBtn {
+    margin: 36px 0 60px 0;
+}
+
+.greenBox {
+    position: absolute;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    height: 44px;
+    width: 513px;
+    border: 1px solid #97E6B8;
+    border-radius: 2px;
+    background-color: #CBF3DC;
+    // margin: 135px 0 25px 140px;
+    top: 130px;
+}
+
+.congratsText {
+    height: 19px;
+    color: #2ECC71;
+    font-family: 'Lato', sans-serif;
+    font-size: 14px;
+    letter-spacing: 0;
+    line-height: 17px;
+    margin-left: 5%;
+}
+
+.crossSymbol {
+    margin-right: 8px;
+    color: #63D995;
+}
+
+.tabsForMobile {
+    display: none;
+}
+
+@media only screen and (max-width:768px) and (min-width:100px) {
+
+    .blueBox {
+        margin: 0 !important;
+        padding: 0 !important;
+        height: 100vh !important;
+        width: 100vh !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        border-radius: 0px !important;
+    }
+
+    .signInHeading {
+        display: none;
+    }
+
+    .tabsForMobile {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+        margin-bottom: 10px;
+        width: 100%;
+        border-bottom: 1px solid rgb(187, 198, 242);
+
+    }
+
+    .orange {
+        height: 4px;
+        width: 81px;
+        border-radius: 3.5px;
+        background-color: #FFA222;
+    }
+
+    .signUpText {
+        display: none;
+    }
+}

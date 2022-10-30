@@ -1,0 +1,62 @@
+.formBox {
+  /* width: 60%; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.signInBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: center;
+  /* background-color: black; */
+}
+.signInHeading {
+  margin: 0;
+  width: 310px;
+  color: #ffffff;
+  font-family: "Open Sans";
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 1.67px;
+  line-height: 27px;
+  text-align: center;
+}
+.bottomBox {
+  width: 100%;
+}
+.forgotPasswordText {
+  margin-bottom: 41px;
+  color: #ffffff;
+  font-family: "Open Sans";
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 19px;
+  text-align: right;
+}
+.signUpText {
+  color: #ffffff;
+  margin-top: 60px;
+  font-family: "Open Sans";
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 19px;
+  text-align: left;
+}
+.usernameBox {
+  margin-top: 36px;
+  width: 100%;
+}
+.mpinBox {
+  width: 100%;
+  margin-top: 16px;
+  position: relative;
+}
+.toggleEye {
+  position: absolute;
+  right: 5px;
+  top: 15px;
+} /*# sourceMappingURL=form.css.map */

@@ -1,7 +1,9 @@
 
 import { useState } from 'react'
-import CopyPassword from '../../components/copyPassword/copyPassword/copyPassword'
+import CopyPassword from '../../components/copyPassword/copyPassword'
 import './homePage.css'
+import { Navigate, useNavigate } from 'react-router-dom'
+import copy from "copy-to-clipboard"
 
 // var retfData: any = [];
 const HomePage = () => {
@@ -9,7 +11,11 @@ const HomePage = () => {
     //     retfData = retData;
     // }
     const [showOverlay, setshowOverlay] = useState(false)
+    const [pin, setpin] = useState(false)
 
+    const toggleye = () => {
+        setpin(!pin)
+    }
     const showO = () => {
         setshowOverlay(true)
         setsetModal1(true)
@@ -40,10 +46,12 @@ const HomePage = () => {
         name = e.target.name;
         value = e.target.value;
         setUsers({ ...users, [name]: value })
-        var retfData = JSON.parse(localStorage.getItem("formdata") || '[]');
+        // var retfData = JSON.parse(localStorage.getItem("formdata") || '[]');
+        var retfData = JSON.parse(localStorage.getItem("currentUser") || '[]');
         // retfData.push(users)
         retfData = [...retfData, users]
-        localStorage.setItem("formdata", JSON.stringify(retfData))
+        // localStorage.setItem("formdata", JSON.stringify(retfData))
+        localStorage.setItem("currentUser", JSON.stringify(retfData))
         setinitialData(retfData);
         setUsers({ url: "", siteName: "", sector: "", userName: "", sitepass: "", notes: "" })
         setshowOverlay(false)
@@ -55,7 +63,8 @@ const HomePage = () => {
         setUsers({ url: "", siteName: "", sector: "", userName: "", sitepass: "", notes: "" })
     }
 
-    const retrData = JSON.parse(localStorage.getItem("formdata") || '[]');
+    // const retrData = JSON.parse(localStorage.getItem("formdata") || '[]');
+    const retrData = JSON.parse(localStorage.getItem("currentUser") || '[]');
     // console.log("retrData", retrData);
     // console.log("sitenames", retrData.siteName);
     // console.log(retrData.length)
@@ -72,7 +81,8 @@ const HomePage = () => {
         setsetModal2(true)
         setsetModal3(false)
         setsetIndex(id)
-        const siteDets = JSON.parse(localStorage.getItem("formdata") || "[]");
+        // const siteDets = JSON.parse(localStorage.getItem("formdata") || "[]");
+        const siteDets = JSON.parse(localStorage.getItem("currentUser") || "[]");
         const displayData = siteDets[id];
         setsetDisplay(displayData);
         // console.log("displayData", displayData);
@@ -99,19 +109,50 @@ const HomePage = () => {
 
 
     }
-
+    const [showdropdownoptions, setshowdropdownoptions] = useState(false)
+    const showdropdown = () => {
+        setshowdropdownoptions(true)
+    }
+    const hidedropdown = () => {
+        setshowdropdownoptions(false)
+    }
+    const navigate = useNavigate();
+    const logoutFn = () => {
+        navigate("/");
+    }
+    const copyPasswordFn = (ind: any) => {
+        console.log(ind);
+        copy(ind)
+    }
     return (
         <>
             <div className='homePage'>
                 <div className="sideBar"></div>
-                <div className="mainContent">
+                <div className="mainContentHome">
                     <div className="header">
                         <div className='logo'>
                             <img src={require("../../assets/image/pass_logo.png")} alt="password master" className='logoImage' />
                         </div>
                         <div className='tabOptions'>
                             <img src={require("../../assets/image/sync.png")} alt="sync" className='iconTab' />
-                            <img src={require("../../assets/image/profilepc.png")} alt="profile" className='iconTab' />
+                            <div className='empty'>
+                                <img src={require("../../assets/image/profilepc.png")} alt="profile" className='iconTab' onMouseOver={showdropdown} onMouseOut={hidedropdown} />
+                                {
+                                    showdropdownoptions &&
+                                    <div className='dropdownProf' onMouseOver={showdropdown} onMouseOut={hidedropdown}>
+                                        <div className='changepasswordDiv'>
+                                            Change Password
+                                            <img src={require("../../assets/image/ic_pass.png")} alt="" />
+                                        </div>
+                                        <div className='profDropDownLine'></div>
+                                        <div className='logoutDiv' onClick={logoutFn}>
+                                            Log Out
+                                            <img src={require("../../assets/image/712391-200.png")} alt="" />
+                                        </div>
+                                    </div>
+                                }
+
+                            </div>
                         </div>
                     </div>
                     <div className="content">
@@ -124,11 +165,9 @@ const HomePage = () => {
                                 <div className='subHead'>
                                     <div className='subHeadTitle'>Social Media</div>
                                     <div className='counter'>
-                                        {/* if({retrData.length} <  {10}){
-                                        "0" + { retrData.length }
-                                    } */}
-
-                                        {retrData.length}
+                                        {retrData.length - 1 < 10
+                                            ? `0${retrData.length - 1}`
+                                            : retrData.length - 1}
                                     </div>
                                     <div className='dropdown'><img src={require("../../assets/image/Path Copy.png")} alt="dropdown" className='dropdownIcon' /></div>
                                 </div>
@@ -141,18 +180,6 @@ const HomePage = () => {
                                 <img src={require("../../assets/image/add_btn.png")} alt="addIcon" className='addIcon' onClick={showO} />
                             </div>
                         </div>
-                        {/* {
-                        retrData.length === { 0} ?
-                            <>
-
-                            </>
-                    } */}
-
-
-                        {/* <div className="additemDiv">
-                            <p>Please Click on the “+” symbol
-                                to add sites</p>
-                        </div> */}
 
                         <div className="showGrids">
                             {(() => {
@@ -165,43 +192,49 @@ const HomePage = () => {
                                 }
                             })()}
                             {
+
+
                                 retrData.map((elem: any, ind: any) => {
 
-                                    return (
+                                    if (ind > 0) {
 
-                                        <div className='eachGridItem' key={ind} onClick={() => { showModal2fn(ind) }}>
-                                            <div className='siteContainer'>
-                                                <div className='siteHead'>
-                                                    {(() => {
-                                                        switch (retrData[ind].siteName) {
-                                                            case "facebook": return <img src={require("../../assets/appIcons/facebookIcon.png")} alt="" height={"50px"} />;
-                                                            case "instagram": return <img src={require("../../assets/appIcons/instagramIcon.png")} alt="" height={"50px"} />;
-                                                            case "gmail": return <img src={require("../../assets/appIcons/gmailIcon.png")} alt="" height={"50px"} />;
-                                                            case "linkedin": return <img src={require("../../assets/appIcons/linkedinIcon.png")} alt="" height={"50px"} />;
-                                                            case "pinterest": return <img src={require("../../assets/appIcons/pinterestIcon.png")} alt="" height={"50px"} />;
-                                                            case "twitter": return <img src={require("../../assets/appIcons/twitterIcon.png")} alt="" height={"50px"} />;
-                                                            case "youtube": return <img src={require("../../assets/appIcons/youtubeIcon.png")} alt="" height={"50px"} />;
-                                                            default: return <img src={require("../../assets/appIcons/undefinedIcon.png")} alt="" width={"50px"} height={"50px"} />;
-                                                        }
-                                                    })()}
+                                        return (
+
+                                            <div className='eachGridItem' key={ind} onClick={() => { showModal2fn(ind) }}>
+                                                <div className='siteContainer'>
+                                                    <div className='siteHead'>
+                                                        {(() => {
+                                                            switch (retrData[ind].siteName) {
+                                                                case "facebook": return <img src={require("../../assets/appIcons/facebookIcon.png")} alt="" height={"50px"} />;
+                                                                case "instagram": return <img src={require("../../assets/appIcons/instagramIcon.png")} alt="" height={"50px"} />;
+                                                                case "gmail": return <img src={require("../../assets/appIcons/gmailIcon.png")} alt="" height={"50px"} />;
+                                                                case "linkedin": return <img src={require("../../assets/appIcons/linkedinIcon.png")} alt="" height={"50px"} />;
+                                                                case "pinterest": return <img src={require("../../assets/appIcons/pinterestIcon.png")} alt="" height={"50px"} />;
+                                                                case "twitter": return <img src={require("../../assets/appIcons/twitterIcon.png")} alt="" height={"50px"} />;
+                                                                case "youtube": return <img src={require("../../assets/appIcons/youtubeIcon.png")} alt="" height={"50px"} />;
+                                                                case "": return;
+                                                                default: return <img src={require("../../assets/appIcons/undefinedIcon.png")} alt="" width={"50px"} height={"50px"} />;
+                                                            }
+                                                        })()}
 
 
 
-                                                    <div className='siteDetails'>
+                                                        <div className='siteDetails'>
 
-                                                        <p className='siteName'>{retrData[ind].siteName}</p>
-                                                        <div>
-                                                            <CopyPassword />
+                                                            <p className='siteName'>{retrData[ind].siteName}</p>
+                                                            <div className='cpdiv' onClick={() => { copyPasswordFn(retrData[ind].sitepass) }}>
+                                                                <CopyPassword />
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div className='siteLink'>
-                                                    www.{retrData[ind].siteName}.com
-                                                </div>
+                                                    <div className='siteLink'>
+                                                        www.{retrData[ind].siteName}.com
+                                                    </div>
 
+                                                </div>
                                             </div>
-                                        </div>
-                                    )
+                                        )
+                                    }
 
 
                                 })
@@ -242,7 +275,8 @@ const HomePage = () => {
                                                         </div>
                                                         <div className='rightInput flexColuming'>
                                                             <label className='modalLabels'>Site Password</label>
-                                                            <input type="text" name="sitepass" id="" value={users.sitepass} onChange={handleInput} className='passwordInput modalInputBox paddingForDisplay' />
+                                                            <input type={pin ? "text" : "password"} name="sitepass" id="" value={users.sitepass} onChange={handleInput} className='passwordInput modalInputBox paddingForDisplay' />
+                                                            <img src={require("../../assets/image/eye_on.png")} alt="eye" className="toggleEyeHome" onClick={toggleye} />
                                                         </div>
                                                     </div>
                                                     <div className='line4 flexColuming'>
@@ -294,8 +328,9 @@ const HomePage = () => {
                                                         </div>
                                                         <div className='rightInput flexColuming'>
                                                             <label className='modalLabels'>Site Password</label>
-                                                            {/* <input type="text" name="sitepass" id="" value={users.sitepass} onChange={handleInput} className='passwordInput modalInputBox' /> */}
-                                                            <div className='urlInput modalInputBox paddingForDisplay'>{setDisplay.sitepass}</div>
+                                                            <input type={pin ? "text" : "password"} name="sitepass" id="" value={setDisplay.sitepass} onChange={handleInput} className='passwordInput modalInputBox' />
+                                                            <img src={require("../../assets/image/eye_on.png")} alt="eye" className="toggleEyeHome" onClick={toggleye} />
+                                                            {/* <div className='urlInput modalInputBox paddingForDisplay'>{setDisplay.sitepass}</div> */}
                                                         </div>
                                                     </div>
                                                     <div className='line4 flexColuming'>
@@ -343,7 +378,8 @@ const HomePage = () => {
                                                         </div>
                                                         <div className='rightInput flexColuming'>
                                                             <label className='modalLabels'>Site Password</label>
-                                                            <input type="text" name="sitepass" id="" value={editDets.sitepass} onChange={(e: any) => seteditDets(e.target.value)} className='passwordInput modalInputBox paddingForDisplay' />
+                                                            <input type={pin ? "text" : "password"} name="sitepass" id="" value={editDets.sitepass} onChange={(e: any) => seteditDets(e.target.value)} className='passwordInput modalInputBox paddingForDisplay' />
+                                                            <img src={require("../../assets/image/eye_on.png")} alt="eye" className="toggleEyeHome" onClick={toggleye} />
                                                         </div>
                                                     </div>
                                                     <div className='line4 flexColuming'>
