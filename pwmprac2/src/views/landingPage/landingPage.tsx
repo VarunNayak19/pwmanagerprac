@@ -4,8 +4,10 @@ import "../../components/buttons/buttons.css"
 import { Navigate, useNavigate } from 'react-router-dom'
 import LockLogo from '../../components/lockLogo/lockLogo'
 import './landingPage.css'
+import { encrypt, decrypt } from 'n-krypta'
 // import "./lp.css"
 const LandingPage = () => {
+    const key = 'reactjs'
     const navigate = useNavigate();
     const [showLogin, setshowLogin] = useState(true)
     const [showSignUp, setshowSignUp] = useState(false)
@@ -22,29 +24,6 @@ const LandingPage = () => {
         value = e.target.value;
         setsignUpdata({ ...signUpdata, [name]: value })
     }
-
-    // const signUpfromdata = (e: any) => {
-    //     e.preventDefault();
-    //     name = e.target.name;
-    //     value = e.target.value;
-    //     setsignUpdata({ ...signUpdata, [name]: value })
-    //     const MPIN = e.target.mpin.value;
-    //     const RMPIN = e.target.cMpin.value;
-
-    //     if (MPIN === RMPIN) {
-    //         let recordList = JSON.parse(localStorage.getItem("signup") || "[]")
-    //         console.log("mn", recordList.mobileNumber);
-    //         recordList.push(signUpdata)
-    //         localStorage.setItem("signup", JSON.stringify(recordList))
-    //         setshowLogin(true)
-    //         setshowSignUp(false)
-    //         setshowToast(true)
-    //         setTimeout(() => setshowToast(false), 3000);
-    //     }
-    //     else {
-    //         alert("Mpins dont match")
-    //     }
-    // }
 
     const [pin, setpin] = useState(false)
 
@@ -73,12 +52,14 @@ const LandingPage = () => {
         event.preventDefault();
         const mobile = event.target.mobileNumber.value;
         const pin = event.target.mpin.value;
+        const epin = encrypt(pin, key)
         const mPin = event.target.cMpin.value;
+        const emPin = encrypt(mPin, key)
 
         const userData = {
             mobile,
-            pin,
-            mPin,
+            epin,
+            emPin,
         };
         const previousData = JSON.parse(localStorage.getItem("signup") || "[]")
         const arr: any[] = [];
@@ -91,15 +72,17 @@ const LandingPage = () => {
         if (arr.includes("exist")) {
             alert("user already exist");
         } else {
-            if (mobile === "" && pin === "" && mPin === "") {
+            if (mobile === "" && epin === "" && emPin === "") {
                 alert("enter all fields");
             } else {
-                if (pin === mPin) {
+                if (epin === emPin) {
                     previousData.push(userData);
                     localStorage.setItem("signup", JSON.stringify(previousData));
                     localStorage.setItem(JSON.stringify(mobile), JSON.stringify([]));
                     setshowLogin(true)
                     setshowSignUp(false)
+                    setshowToast(true)
+                    setTimeout(() => setshowToast(false), 3000);
                 } else {
                     alert("enter same pins");
                 }
@@ -117,26 +100,33 @@ const LandingPage = () => {
         const newArr: any[] = [];
         const userData = JSON.parse(localStorage.getItem("signup") || "[]");
         userData.map((user: any) => {
+            const dmPin = decrypt(user.emPin, key)
             console.log(user.mobile, user.mPin)
-            if (mobile === user.mobile && mPin === user.mPin) {
-                newArr.push("exists");
+            if (mobile === user.mobile && mPin === dmPin) {
+                newArr.push("user exists");
             }
-            else if (mobile === user.mobile && mPin !== user.mPin) {
-                alert("wrong password")
+            else if (mobile === user.mobile && mPin !== dmPin) {
+                newArr.push("wrong password");
             }
             else {
-                alert("no account")
+                newArr.push("no account");
             }
 
         });
-        if (newArr.includes("exists")) {
-            localStorage.setItem("currentUser", JSON.stringify([mobile]));
+        if (newArr.includes("user exists")) {
+            localStorage.setItem("currentUser", JSON.stringify(mobile));
             navigate("/home");
         }
+        else if (newArr.includes("wrong password")) {
+            alert("wrong Mpin")
+        }
+        else if (newArr.includes("no account")) {
+            localStorage.setItem("currentUser", JSON.stringify([mobile]));
+            alert("please check if the mobile number is registered")
+        }
+        localStorage.setItem('auth', 'true')
 
-        // else {
-        //     alert("please signUp to Login...");
-        // }
+
     };
     return (
         <div className='mainConten'>
@@ -175,7 +165,7 @@ const LandingPage = () => {
                                     <p className="signInHeading">SIGN IN TO YOUR ACCOUNT</p>
                                     <div className="usernameBox">
                                         {/* <Input placeholder="Mobile Number" /> */}
-                                        <input type="text" placeholder="Mobile Number" className='input' name='mobileNumber' />
+                                        <input type="text" placeholder="Mobile Number" pattern='[0-9]+' className='input' name='mobileNumber' minLength={10} maxLength={10} />
                                     </div>
                                     <div className="mpinBox">
                                         {/* <Input placeholder="MPin" minValue={4} maxValue={4} /> */}
@@ -219,7 +209,7 @@ const LandingPage = () => {
                                 <p className="signInHeading">SIGN UP</p>
                                 <div className="usernameBox">
                                     {/* <Input placeholder="Mobile Number" /> */}
-                                    <input type="text" placeholder="Mobile Number" className='input' name='mobileNumber' onChange={handleChange} />
+                                    <input type="text" placeholder="Mobile Number" pattern='[0-9]+' className='input' name='mobileNumber' onChange={handleChange} minLength={10} maxLength={10} />
                                 </div>
                                 <div className="mpinBox">
                                     {/* <Input placeholder="MPin" minValue={4} maxValue={4} /> */}

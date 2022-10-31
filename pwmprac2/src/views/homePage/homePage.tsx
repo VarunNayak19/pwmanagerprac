@@ -1,5 +1,5 @@
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import CopyPassword from '../../components/copyPassword/copyPassword'
 import './homePage.css'
 import { Navigate, useNavigate } from 'react-router-dom'
@@ -7,6 +7,15 @@ import copy from "copy-to-clipboard"
 
 // var retfData: any = [];
 const HomePage = () => {
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const auth = localStorage.getItem('auth');
+        if (auth != 'true') {
+            navigate('/')
+        }
+    }, [])
+
     // if (retfData === "[]" || undefined) {
     //     retfData = retData;
     // }
@@ -25,6 +34,8 @@ const HomePage = () => {
         setshowOverlay(false)
         setsetModal1(false)
         setsetModal2(true)
+        setpin(false)
+        setUsers({ url: "", siteName: "", sector: "", userName: "", sitepass: "", notes: "" })
     }
 
     const [users, setUsers] = useState({
@@ -40,6 +51,10 @@ const HomePage = () => {
     const [initialData, setinitialData] = useState({
         url: "", siteName: "", sector: "", userName: "", sitepass: "", notes: ""
     })
+
+    const useratthemoment: any = localStorage.getItem('currentUser');
+    console.log("useratthemoment", useratthemoment);
+
     const getFormData = (e: any) => {
         // var retfData: any = [];
         e.preventDefault();
@@ -47,11 +62,13 @@ const HomePage = () => {
         value = e.target.value;
         setUsers({ ...users, [name]: value })
         // var retfData = JSON.parse(localStorage.getItem("formdata") || '[]');
-        var retfData = JSON.parse(localStorage.getItem("currentUser") || '[]');
+        // var retfData = JSON.parse(localStorage.getItem("currentUser") || '[]');
+        var retfData = JSON.parse(localStorage.getItem(useratthemoment) || '[]');
         // retfData.push(users)
         retfData = [...retfData, users]
         // localStorage.setItem("formdata", JSON.stringify(retfData))
-        localStorage.setItem("currentUser", JSON.stringify(retfData))
+        // localStorage.setItem("currentUser", JSON.stringify(retfData))
+        localStorage.setItem(useratthemoment, JSON.stringify(retfData))
         setinitialData(retfData);
         setUsers({ url: "", siteName: "", sector: "", userName: "", sitepass: "", notes: "" })
         setshowOverlay(false)
@@ -64,7 +81,9 @@ const HomePage = () => {
     }
 
     // const retrData = JSON.parse(localStorage.getItem("formdata") || '[]');
-    const retrData = JSON.parse(localStorage.getItem("currentUser") || '[]');
+    // const retrData = JSON.parse(localStorage.getItem("currentUser") || '[]');
+    let retrData = JSON.parse(localStorage.getItem(useratthemoment) || '[]');
+    console.log("retrData", retrData);
     // console.log("retrData", retrData);
     // console.log("sitenames", retrData.siteName);
     // console.log(retrData.length)
@@ -81,8 +100,9 @@ const HomePage = () => {
         setsetModal2(true)
         setsetModal3(false)
         setsetIndex(id)
+        console.log("setIndex", setIndex);
         // const siteDets = JSON.parse(localStorage.getItem("formdata") || "[]");
-        const siteDets = JSON.parse(localStorage.getItem("currentUser") || "[]");
+        const siteDets = JSON.parse(localStorage.getItem(useratthemoment) || "[]");
         const displayData = siteDets[id];
         setsetDisplay(displayData);
         // console.log("displayData", displayData);
@@ -116,18 +136,50 @@ const HomePage = () => {
     const hidedropdown = () => {
         setshowdropdownoptions(false)
     }
-    const navigate = useNavigate();
+
     const logoutFn = () => {
+        localStorage.setItem('auth', 'false')
         navigate("/");
     }
     const copyPasswordFn = (ind: any) => {
-        console.log(ind);
+        alert("password copied")
         copy(ind)
     }
+
+    const getEditForm = (e: any) => {
+        e.preventDefault();
+        const formData = {
+            url: e.target.url.value,
+            sitename: e.target.siteName.value,
+            folder: e.target.sector.value,
+            username: e.target.userName.value,
+            sitepassword: e.target.sitepass.value,
+            notes: e.target.notes.value
+        }
+        console.log("useratthemoment", useratthemoment)
+        const currrentUser = JSON.parse(localStorage.getItem(useratthemoment) || '[]');
+        console.log("currrentUser", currrentUser);
+        let res = JSON.parse(localStorage.getItem(currrentUser) || '[]');
+        console.log("res", res)
+        res[setIndex] = formData
+        localStorage.setItem(useratthemoment, JSON.stringify(res))
+        retrData = JSON.parse(localStorage.getItem(useratthemoment) || '[]');
+        console.log("updatedretrdata", retrData)
+        hideO()
+    }
+
+
     return (
         <>
             <div className='homePage'>
-                <div className="sideBar"></div>
+                <div className="sideBar">
+                    <div className="burgirdiv">
+                        <img src={require("../../assets/image/burger_menu.png")} alt="" className='burgirimage' />
+                    </div>
+                    <div className="homediv">
+                        <img src={require("../../assets/image/home_icn.png")} alt="" className='homeimage' />
+                    </div>
+                </div>
                 <div className="mainContentHome">
                     <div className="header">
                         <div className='logo'>
@@ -155,6 +207,54 @@ const HomePage = () => {
                             </div>
                         </div>
                     </div>
+
+                    <div className="mobileHeader">
+                        <div className="head">
+                            <div className="passManager">
+                                <img
+                                    src={require('../../assets/image/burger_menu.png')}
+                                    alt="icon"
+                                    className="iconsImg"
+                                />
+                                <img
+                                    src={require('../../assets/image/PASS MANAGER.png')}
+                                    alt="icon"
+                                    className="passManagerMobileLogo"
+                                />
+                            </div>
+                            <div className="profileMobile">
+                                <img
+                                    src={require('../../assets/image/search.png')}
+                                    alt="icon"
+                                    className="iconsImg"
+                                />
+                                <img
+                                    src={require('../../assets/image/sync_icn.png')}
+                                    alt="icon"
+                                    className="iconsImg"
+                                />
+                                <div className="dropdown mobile">
+                                    <img src={require("../../assets/image/profile.png")} alt="profile" className='iconTab iconsImg' onMouseOver={showdropdown} onMouseOut={hidedropdown} />
+                                    {
+                                        showdropdownoptions &&
+                                        <div className='dropdownProf' onMouseOver={showdropdown} onMouseOut={hidedropdown}>
+                                            <div className='changepasswordDiv'>
+                                                Change Password
+                                                <img src={require("../../assets/image/ic_pass.png")} alt="" />
+                                            </div>
+                                            <div className='profDropDownLine'></div>
+                                            <div className='logoutDiv' onClick={logoutFn}>
+                                                Log Out
+                                                <img src={require("../../assets/image/712391-200.png")} alt="" />
+                                            </div>
+                                        </div>
+                                    }
+                                    <img src={require("../../assets/image/add_btn.png")} alt="addIcon" className='addIconMob' onClick={showO} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="content">
                         <div className='titleAndSearch'>
                             <div className='titleLeftSide'>
@@ -165,9 +265,9 @@ const HomePage = () => {
                                 <div className='subHead'>
                                     <div className='subHeadTitle'>Social Media</div>
                                     <div className='counter'>
-                                        {retrData.length - 1 < 10
-                                            ? `0${retrData.length - 1}`
-                                            : retrData.length - 1}
+                                        {retrData.length < 10
+                                            ? `0${retrData.length}`
+                                            : retrData.length}
                                     </div>
                                     <div className='dropdown'><img src={require("../../assets/image/Path Copy.png")} alt="dropdown" className='dropdownIcon' /></div>
                                 </div>
@@ -196,14 +296,14 @@ const HomePage = () => {
 
                                 retrData.map((elem: any, ind: any) => {
 
-                                    if (ind > 0) {
 
-                                        return (
 
-                                            <div className='eachGridItem' key={ind} onClick={() => { showModal2fn(ind) }}>
-                                                <div className='siteContainer'>
-                                                    <div className='siteHead'>
-                                                        {(() => {
+                                    return (
+
+                                        <div className='eachGridItem' >
+                                            <div className='siteContainer'>
+                                                <div className='siteHead'>
+                                                    {/* {(() => {
                                                             switch (retrData[ind].siteName) {
                                                                 case "facebook": return <img src={require("../../assets/appIcons/facebookIcon.png")} alt="" height={"50px"} />;
                                                                 case "instagram": return <img src={require("../../assets/appIcons/instagramIcon.png")} alt="" height={"50px"} />;
@@ -212,29 +312,55 @@ const HomePage = () => {
                                                                 case "pinterest": return <img src={require("../../assets/appIcons/pinterestIcon.png")} alt="" height={"50px"} />;
                                                                 case "twitter": return <img src={require("../../assets/appIcons/twitterIcon.png")} alt="" height={"50px"} />;
                                                                 case "youtube": return <img src={require("../../assets/appIcons/youtubeIcon.png")} alt="" height={"50px"} />;
-                                                                case "": return;
                                                                 default: return <img src={require("../../assets/appIcons/undefinedIcon.png")} alt="" width={"50px"} height={"50px"} />;
                                                             }
-                                                        })()}
+                                                        })()} */}
+                                                    <img
+
+                                                        src={`https://app.outboundsales.io/api/logo/${retrData[ind].siteName}.com`}
+
+                                                        height="50px"
+
+                                                        width="50px"
+
+                                                        alt={retrData[ind].siteName}
+
+                                                        style={{
+
+                                                            backgroundPosition: 'center',
+
+                                                            borderRadius: '50%',
+
+                                                            backgroundSize: 'cover',
+
+                                                            margin: "15px"
 
 
 
-                                                        <div className='siteDetails'>
+                                                        }}
 
-                                                            <p className='siteName'>{retrData[ind].siteName}</p>
-                                                            <div className='cpdiv' onClick={() => { copyPasswordFn(retrData[ind].sitepass) }}>
-                                                                <CopyPassword />
-                                                            </div>
+                                                    />
+
+
+
+
+
+                                                    <div className='siteDetails'>
+
+                                                        <p className='siteName'>{retrData[ind].siteName}</p>
+                                                        <div className='cpdiv' onClick={() => { copyPasswordFn(retrData[ind].sitepass) }}>
+                                                            <CopyPassword />
                                                         </div>
                                                     </div>
-                                                    <div className='siteLink'>
-                                                        www.{retrData[ind].siteName}.com
-                                                    </div>
-
                                                 </div>
+                                                <div className='siteLink' key={ind} onClick={() => { showModal2fn(ind) }}>
+                                                    www.{retrData[ind].siteName}.com
+                                                </div>
+
                                             </div>
-                                        )
-                                    }
+                                        </div>
+                                    )
+
 
 
                                 })
@@ -305,13 +431,13 @@ const HomePage = () => {
                                                     <div className='line1 flexColuming'>
                                                         <label className='modalLabels'>URL</label>
                                                         {/* <input type="text" name="url" id="" className='urlInput modalInputBox' value={users.url} onChange={handleInput} /> */}
-                                                        <div className='urlInput modalInputBox paddingForDisplay'>{setDisplay.url}</div>
+                                                        <div className='urlInput modalInputBox paddingForDisplay'>{retrData[setIndex].url}</div>
                                                     </div>
                                                     <div className='line2 rowFlexing'>
                                                         <div className='leftInput flexColuming'>
                                                             <label className='modalLabels'>Site Name</label>
                                                             {/* <input type="text" name="siteName" id="" value={users.siteName} onChange={handleInput} className='urlInput modalInputBox' /> */}
-                                                            <div className='urlInput modalInputBox paddingForDisplay'>{setDisplay.siteName}</div>
+                                                            <div className='urlInput modalInputBox paddingForDisplay'>{retrData[setIndex].siteName}</div>
                                                         </div>
                                                         <div className='rightInput flexColuming'>
                                                             <label className='modalLabels'>Sector/Folder</label>
@@ -354,8 +480,8 @@ const HomePage = () => {
 
                                             {
                                                 setModal3 &&
-                                                <form className='modal1' onSubmit={upDateForm}>
-                                                    <div className='siteNameModalHead'>Add Site</div>
+                                                <form className='modal1' onSubmit={getEditForm}>
+                                                    <div className='siteNameModalHead'>edit site</div>
                                                     <div className='line1 flexColuming'>
                                                         <label className='modalLabels'>URL</label>
                                                         <input type="text" name="url" id="" className='urlInput modalInputBox paddingForDisplay' value={editDets.url} onChange={(e: any) => seteditDets(e.target.value)} />

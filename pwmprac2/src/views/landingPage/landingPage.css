@@ -17,7 +17,7 @@ code {
 
 .mainContent {
   height: 100vh;
-  background-color: aqua;
+  /* background-color: aqua; */
   display: flex;
   justify-content: center;
   align-items: center;

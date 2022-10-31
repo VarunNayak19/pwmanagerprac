@@ -174,7 +174,7 @@
   position: relative;
 }
 .showGrids {
-  width: 100%;
+  width: 92%;
   margin-top: 50px;
   margin-left: 30px;
   display: flex;
@@ -187,7 +187,8 @@
 }
 .siteContainer {
   height: auto;
-  width: 363px;
+  /* width: 363px; */
+  width: auto;
   margin: 20px;
   padding: 5px;
   padding-bottom: 0px;
@@ -398,4 +399,81 @@
 }
 .changepasswordDiv {
   padding-right: 24px;
+}
+.burgirdiv.homediv {
+  width: 100%;
+}
+.mobileHeader {
+  display: none;
+}
+.siteDetails {
+  margin-left: 100px;
+}
+
+@media only screen and (max-width: 768px) {
+  .homePage {
+    width: 100vw;
+    margin: 0;
+  }
+  .mobileHeader {
+    position: fixed;
+    width: 120vw !important;
+    background-color: #0e85ff;
+    display: flex;
+    width: inherit;
+  }
+  .sideBar {
+    display: none;
+  }
+  .mainContentHome {
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+  }
+  .header {
+    display: none;
+  }
+  .titleRightSide {
+    display: none;
+  }
+  .titleLeftSide {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  .addIconMob {
+    position: fixed;
+    bottom: 40px;
+    right: 30px;
+  }
+  .head {
+    display: flex;
+    padding: 10px 5px 12px 5px;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  .profileMobile {
+    width: 60%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+  .iconsImg {
+    width: 22px;
+    height: 22px;
+  }
+  .passManagerMobileLogo {
+    width: 87px;
+    margin-left: 16px;
+  }
+  .overlay {
+    background-color: transparent;
+  }
+  .addSiteModal {
+    margin: 0;
+  }
+  .additemDiv {
+    display: none;
+  }
 }
